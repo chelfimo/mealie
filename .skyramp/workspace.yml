@@ -1,0 +1,36 @@
+# Skyramp Workspace Configuration
+workspace:
+  repoName: chelfimo/mealie
+  repoUrl: https://github.com/chelfimo/mealie
+metadata:
+  schemaVersion: v1
+  mcpVersion: 0.2.8
+  executorVersion: v1.3.29
+  createdAt: "2026-06-25T19:38:07.634Z"
+  updatedAt: "2026-06-25T19:38:07.641Z"
+services:
+  - serviceName: mealie-backend
+    language: python
+    framework: pytest
+    testDirectory: tests
+    api:
+      schemaPath: http://localhost:9000/openapi.json
+      authType: bearer
+      authHeader: Authorization
+      baseUrl: http://localhost:9000
+    runtimeDetails:
+      serverStartCommand: docker compose -f testbot/docker-compose.yml up -d --build
+      runtime: docker
+      dockerNetwork: testbot_default
+  - serviceName: mealie-frontend
+    language: typescript
+    framework: playwright
+    testDirectory: tests/skyramp/frontend
+    api:
+      authType: none
+      authHeader: ""
+      baseUrl: http://localhost:9000
+    runtimeDetails:
+      serverStartCommand: docker compose -f testbot/docker-compose.yml up -d --build
+      runtime: docker
+      dockerNetwork: testbot_default
