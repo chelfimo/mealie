@@ -537,6 +537,11 @@ def recipes_slug_last_made(slug):
     return f"{prefix}/recipes/{slug}/last-made"
 
 
+def recipes_slug_scale(slug):
+    """`/api/recipes/{slug}/scale`"""
+    return f"{prefix}/recipes/{slug}/scale"
+
+
 def recipes_timeline_events_item_id(item_id):
     """`/api/recipes/timeline/events/{item_id}`"""
     return f"{prefix}/recipes/timeline/events/{item_id}"
