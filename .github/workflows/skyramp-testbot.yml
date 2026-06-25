@@ -40,6 +40,8 @@ jobs:
           skyrampLicenseFile: ${{ secrets.SKYRAMP_LICENSE_FILE }}
           anthropicApiKey: ${{ secrets.SKYRAMP_TESTBOT_API_KEY }}
           githubToken: ${{ steps.skyramp-testbot-app-token.outputs.token }}
+          targetSetupCommand: 'bash testbot/setup.sh'
+          targetReadyCheckCommand: 'curl -sf http://localhost:9000/api/app/about'
           authTokenCommand: 'bash testbot/get-token.sh'
-          targetTeardownCommand: 'bash testbot/setup.sh'
+          targetTeardownCommand: 'docker compose -f testbot/docker-compose.yml down -v'
           uiCredentials: ${{ secrets.SKYRAMP_UI_CREDENTIALS }}
