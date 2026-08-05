@@ -35,7 +35,25 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.skyramp-testbot-app-token.outputs.token }}
 
-      - uses: skyramp/testbot@d73b19920cf3d8df3b3287c8bd95d09fd997a3d1 # v0.10.6
+      # ── SKYR-3862 end-to-end validation (temporary) ────────────────────
+      # Runs testbot and the MCP server from unreleased branches so the
+      # credential-handling change can be exercised before release.
+      # Revert this whole block (and restore the pinned `uses:` below) once
+      # the change ships.
+      #
+      # The action source lives in the PRIVATE letsramp/testbot, so it cannot
+      # be referenced as `uses: letsramp/testbot@ref` directly — GitHub can
+      # only resolve `uses:` against a repo the workflow can read. Check it
+      # out to a local path first, then reference that path.
+      - name: Check out testbot action from branch
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          repository: letsramp/testbot
+          ref: mourad/SKYR-3862
+          token: ${{ secrets.LETSRAMP_READ_PAT }}
+          path: .testbot-action
+
+      - uses: ./.testbot-action
         with:
           skyrampLicenseFile: ${{ secrets.SKYRAMP_LICENSE_FILE }}
           anthropicApiKey: ${{ secrets.SKYRAMP_TESTBOT_API_KEY }}
@@ -45,5 +63,9 @@ jobs:
           authTokenCommand: "bash testbot/get-token.sh"
           targetTeardownCommand: "docker compose -f testbot/docker-compose.yml down -v"
           uiCredentials: ${{ secrets.SKYRAMP_UI_CREDENTIALS }}
-          skyrampMcpVersion: "v0.2.150-rc.ui.mntnc"
+          # Build the MCP server from the matching branch instead of npm.
+          # skyrampMcpVersion is ignored when the source is github.
+          skyrampMcpSource: github
+          skyrampMcpGithubRef: mourad/SKYR-3862
+          skyrampMcpGithubToken: ${{ secrets.LETSRAMP_READ_PAT }}
           skyrampExecutorVersion: "v1.3.29"
